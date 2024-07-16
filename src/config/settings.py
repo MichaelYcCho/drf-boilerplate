@@ -41,7 +41,10 @@ THIRD_PARTY_APPS = [
     "rest_framework",
 ]
 
-CUSTOM_APPS = []
+CUSTOM_APPS = [
+    "users.apps.UsersConfig",
+    "core.apps.CoreConfig",
+]
 
 SYSTEM_APPS = [
     "django.contrib.admin",
@@ -64,7 +67,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
-    "EXCEPTION_HANDLER": "utils.exceptions.handler.custom_exception_handler",
+    "EXCEPTION_HANDLER": "core.utils.exceptions.handler.core_exception_handler",
 }
 
 MIDDLEWARE = [
