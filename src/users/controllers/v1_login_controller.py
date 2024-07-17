@@ -28,6 +28,7 @@ class LogInAPI(APIView):
             ref_name = "login_output"
 
     @swagger_auto_schema(
+        tags=["users"],
         operation_summary="V1 Sign In API",
         operation_description="로그인 API",
         request_body=user_login_request,
