@@ -37,9 +37,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-THIRD_PARTY_APPS = [
-    "rest_framework",
-]
+THIRD_PARTY_APPS = ["rest_framework", "drf_yasg"]
 
 CUSTOM_APPS = [
     "users.apps.UsersConfig",
@@ -146,6 +144,9 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Custom User Model
+AUTH_USER_MODEL = "users.User"
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -161,3 +162,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_ROOT = "uploads"
 MEDIA_URL = "uploads/"
+
+# SWAGGER SETTINGS
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "api_Key": {"type": "apiKey", "in": "header", "name": "Token Authorization"}
+    },
+    "LOGIN_URL": "http://localhost:8000/admin/login/?next=/swagger/",
+    "LOGOUT_URL": "http://0.0.0.0:8000/admin/logout/?next=/swagger/",
+}
