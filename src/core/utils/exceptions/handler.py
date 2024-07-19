@@ -31,7 +31,9 @@ def core_exception_handler(exc: Any, context: Any) -> Optional[Response]:
         }
 
         if isinstance(exc, serializers.ValidationError):
+            error_keys = list(response.data.keys())
             data["error_code"] = VALIDATION_ERROR_CODE
+            data["error_detail"] = f"{error_detail} : {error_keys}"
             response.data = data
             logging.error(f"[Exception] - ValidationError {exc}")
         else:
