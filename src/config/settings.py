@@ -171,3 +171,8 @@ SWAGGER_SETTINGS = {
     "LOGIN_URL": "http://localhost:8000/admin/login/?next=/swagger/",
     "LOGOUT_URL": "http://0.0.0.0:8000/admin/logout/?next=/swagger/",
 }
+
+
+# JWT SETTINGS
+JWT_SECRET_KEY = env("JWT_SECRET_KEY")
+JWT_ALGORITHM = env("JWT_ALGORITHM")

@@ -6,12 +6,13 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from users.services.v1_jwt_sign_in_service import JWTSignInService
 from core.utils.exceptions.exception import UserExceptions
-from users.services.v1_login_service import UserSignInService
+
 from users.controllers.swaggers import user_login_request
 
 
-class LogInAPI(APIView):
+class SignInAPI(APIView):
     permission_classes = [AllowAny]
 
     class InputSerializer(serializers.Serializer):
@@ -22,7 +23,7 @@ class LogInAPI(APIView):
             ref_name = "login_input"
 
     class OutputSerializer(serializers.Serializer):
-        token = serializers.CharField()
+        access_token = serializers.CharField()
 
         class Meta:
             ref_name = "login_output"
@@ -47,8 +48,8 @@ class LogInAPI(APIView):
     def post(self, request: Request):
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
-        service = UserSignInService(request, input_serializer.validated_data)
-        token = service.log_in()
-        output_serializer = self.OutputSerializer(data={"token": token.key})
+        service = JWTSignInService(request, input_serializer.validated_data)
+        token = service.sign_in()
+        output_serializer = self.OutputSerializer(data={"access_token": token})
         output_serializer.is_valid(raise_exception=True)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
