@@ -26,21 +26,27 @@ class JWTSignInService:
             payload = {
                 "user_id": user.id,
             }
-            token = self.generate_jwt_token(payload, ACCESS_TOKEN)
+            access_token = self.generate_jwt_token(payload, ACCESS_TOKEN)
+            refresh_token = self.generate_jwt_token(payload, REFRESH_TOKEN)
 
-            return token
+            token_response = {
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+            }
+
+            return token_response
 
         raise UserExceptions.UserSignInFailed
 
     def generate_jwt_token(self, payload, token_type):
         if token_type == ACCESS_TOKEN:
-            exp = datetime.datetime.now() + datetime.timedelta(hours=2)
+            expired_at = datetime.datetime.now() + datetime.timedelta(hours=2)
         elif token_type == REFRESH_TOKEN:
-            exp = datetime.datetime.now() + datetime.timedelta(weeks=2)
+            expired_at = datetime.datetime.now() + datetime.timedelta(weeks=2)
         else:
             raise Exception("Invalid tokenType")
 
-        payload["exp"] = exp
+        payload["exp"] = expired_at
         payload["iat"] = datetime.datetime.now()
         encoded = jwt.encode(
             payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM

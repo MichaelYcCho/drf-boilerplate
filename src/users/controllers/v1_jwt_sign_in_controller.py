@@ -24,6 +24,7 @@ class SignInAPI(APIView):
 
     class OutputSerializer(serializers.Serializer):
         access_token = serializers.CharField()
+        refresh_token = serializers.CharField()
 
         class Meta:
             ref_name = "login_output"
@@ -49,7 +50,12 @@ class SignInAPI(APIView):
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         service = JWTSignInService(request, input_serializer.validated_data)
-        token = service.sign_in()
-        output_serializer = self.OutputSerializer(data={"access_token": token})
+        token_response = service.sign_in()
+        output_serializer = self.OutputSerializer(
+            data={
+                "access_token": token_response["access_token"],
+                "refresh_token": token_response["refresh_token"],
+            }
+        )
         output_serializer.is_valid(raise_exception=True)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
