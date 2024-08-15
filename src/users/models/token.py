@@ -1,9 +1,20 @@
 from django.db import models
 
+from core.models import TimeStamp
 
-class TimeStamp(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+
+class TokenStorage(TimeStamp):
+    refresh_token = models.CharField(
+        max_length=255,
+        null=True,
+    )
+    refresh_token_expired_at = models.IntegerField(
+        null=True,
+    )
+    user = models.OneToOneField(
+        "User",
+        on_delete=models.CASCADE,
+    )
 
     class Meta:
-        abstract = True
+        db_table = "users_token_storage"
