@@ -59,3 +59,7 @@ class SignInAPI(APIView):
         )
         output_serializer.is_valid(raise_exception=True)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
+
+
+class ReIssueAPI(APIView):
+    pass

@@ -13,6 +13,7 @@ class TokenStorage(TimeStamp):
     )
     user = models.OneToOneField(
         "User",
+        related_name="token_storage",
         on_delete=models.CASCADE,
     )
 

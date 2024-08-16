@@ -8,6 +8,7 @@ from rest_framework.request import Request
 
 from core.utils.constant import ACCESS_TOKEN, REFRESH_TOKEN
 from core.utils.exceptions.exception import UserExceptions
+from users.models.token import TokenStorage
 
 
 class JWTSignInService:
@@ -33,6 +34,16 @@ class JWTSignInService:
                 "access_token": access_token,
                 "refresh_token": refresh_token,
             }
+
+            token_storage = TokenStorage.objects.filter(user=user).first()
+            if token_storage is None:
+                token_storage = TokenStorage.objects.create(
+                    user=user,
+                    refresh_token=refresh_token,
+                )
+
+            token_storage.refresh_token = refresh_token
+            token_storage.save()
 
             return token_response
 
