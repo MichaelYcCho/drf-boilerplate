@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from users.services.v1_jwt_sign_in_service import JWTSignInService
-from core.utils.exceptions.exception import UserExceptions
+from core.utils.exceptions.exception import TokenExceptions, UserExceptions
 
 from users.controllers.swaggers import user_login_request
 
@@ -62,4 +62,45 @@ class SignInAPI(APIView):
 
 
 class ReIssueAPI(APIView):
-    pass
+    permission_classes = [AllowAny]
+
+    class InputSerializer(serializers.Serializer):
+        refresh_token = serializers.CharField()
+
+        class Meta:
+            ref_name = "reissue_input"
+
+    class OutputSerializer(serializers.Serializer):
+        access_token = serializers.CharField()
+
+        class Meta:
+            ref_name = "reissue_output"
+
+    @swagger_auto_schema(
+        tags=["users"],
+        operation_summary="V1 ReIssue API",
+        operation_description="토큰 재발급 API",
+        request_body=InputSerializer,
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description="토큰 재발급 완료",
+                schema=OutputSerializer(),
+            ),
+            status.HTTP_400_BAD_REQUEST: openapi.Response(
+                TokenExceptions.TokenInvalid.default_detail
+            ),
+        },
+    )
+    def post(self, request: Request):
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        service = JWTSignInService(request, input_serializer.validated_data)
+        token_response = service.reissue()
+        output_serializer = self.OutputSerializer(
+            data={
+                "access_token": token_response["access_token"],
+                "refresh_token": token_response["refresh_token"],
+            }
+        )
+        output_serializer.is_valid(raise_exception=True)
+        return Response(output_serializer.data, status=status.HTTP_200_OK)
